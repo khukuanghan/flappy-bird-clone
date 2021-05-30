@@ -4,11 +4,19 @@ import Phaser from "phaser";
 function preload () {
   // This context - scene
   // Contains function and properties we can use.
-  debugger;
+  this.load.image(
+    'sky', // Key of the resource. (Can call it anything you want.)
+    'assets/sky.png' // The path to the file.
+  );
 };
 
 function create () {
-  debugger;
+  // The reason we half of the config width and height is so that the image is placed in the center of the scene.
+  this.add.image(
+    config.width / 2, // x axis
+    config.height / 2, // y axis
+    'sky', // key of the image. (This is determined in preload.)
+  );
 };
 
 const config = {
