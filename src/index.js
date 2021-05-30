@@ -1,28 +1,31 @@
-
 import Phaser from "phaser";
 
+// Loading assets, such as images, music, animations
+function preload () {
+  // This context - scene
+  // Contains function and properties we can use.
+  debugger;
+};
+
+function create () {
+  debugger;
+};
+
 const config = {
+  // WebGL (Web Graphics Library) is the default Phaser renderer.
+  // JS API for rendering 2D and 3D graphics - It is compatible with almost every modern web browser.
   type: Phaser.AUTO,
-  width: 800,
+  width:  800,
   height: 600,
   physics: {
+    // Arcade physics plugin manages physics simulation.
     default: 'arcade',
-    arcade: {
-      gravity: { y: 200 }
-    }
   },
   scene: {
     preload: preload,
-    create: create
+    create: create,
   }
 };
 
+
 new Phaser.Game(config);
-
-function preload () {
-  this.load.image('sky', 'assets/sky.png');
-}
-
-function create () {
-  this.add.image(400, 300, 'sky');
-}
