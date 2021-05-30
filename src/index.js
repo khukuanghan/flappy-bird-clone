@@ -11,11 +11,13 @@ function preload () {
 };
 
 function create () {
-  // The reason we half of the config width and height is so that the image is placed in the center of the scene.
   this.add.image(
-    config.width / 2, // x axis
-    config.height / 2, // y axis
-    'sky', // key of the image. (This is determined in preload.)
+    0, // x axis of the scene
+    0, // y axis of the scene
+    'sky', // key of the image (this is determined in the preload.)
+  ).setOrigin( // This determines the origin points (coordinates) of the image file.
+    0, // x axis of the image file
+    0, // y axis of the image file.
   );
 };
 
