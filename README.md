@@ -4,6 +4,9 @@
 This project is part of a tutorial in a Phaser.io Udemy Course. The sole purpose of this repository is used for education purposes only. <b>I DO NOT CLAIM TO OWN ANY OF THESE RESOURCES. ALL ASSETS BELONG TO THEIR RESPECTIVE OWNERS</b>
 </p>
 <p>
+Just run yarn dev to start run and compile the project, and visit localhost:8080
+</p>
+<p>
 Reference & Resources:
 
 <ul>

@@ -1,5 +1,7 @@
 import Phaser from "phaser";
 
+let bird = null;
+
 // Loading assets, such as images, music, animations
 function preload () {
   // This context - scene
@@ -8,6 +10,9 @@ function preload () {
     'sky', // Key of the resource. (Can call it anything you want.)
     'assets/sky.png' // The path to the file.
   );
+
+  // Load the bird
+  this.load.image('bird', 'assets/bird.png');
 };
 
 function create () {
@@ -19,6 +24,14 @@ function create () {
     0, // x axis of the image file
     0, // y axis of the image file.
   );
+
+  // Add a sprite (game object - it has more properties than an image)
+  bird = this.add.sprite(
+    config.width/10, 
+    config.height/2, 
+    'bird'
+  ).setOrigin(0);
+  debugger
 };
 
 const config = {
