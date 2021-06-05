@@ -2,6 +2,7 @@ import Phaser from "phaser";
 
 let bird = null;
 let totalDelta = 0;
+const xVelocity = 200;
 
 // Loading assets, such as images, music, animations
 function preload () {
@@ -35,9 +36,25 @@ function create () {
 
   // Set the gravity for the bird.
   // bird.body.gravity.y = 200; // Speed (pixels per second); [This will gradually increase the velocity.]
-  // bird.body.velocity.y = 200; // Velocity (distance over time); [Velocity will always be constant.]
-
+  bird.body.velocity.x = xVelocity; // Velocity (distance over time); [Velocity will always be constant.]
 };
+
+
+// If the bird's x position is same or larger than the width of the canvas, send the bird back to the left
+// If the bird's x position is same or smaller than 0, send the bird back to the right.
+// Essentially the bird will bounce from left to right and vice versa.
+function _horizontalBounce () {
+  const {
+    x: positionX,
+    width: birdWidth
+  } = bird;
+  if (positionX >=  config.width - birdWidth) {
+    bird.body.velocity.x = -Math.abs(xVelocity);
+  } 
+  else if (positionX <= 0) {
+    bird.body.velocity.x = xVelocity;
+  }
+}
 
 // 60 frames per second
 // This function will execute 60 times per second.
@@ -45,14 +62,8 @@ function update (
   time, // total time that the scene has been running.
   delta // How much milliseconds per frame
 ) {
-
-  if (totalDelta >= 1000) {
-    console.log('debug_kkh:: velocity', bird.body.velocity.y);
-    totalDelta = 0;
-  }
-
-  totalDelta += delta;
-}
+  _horizontalBounce();
+};
 
 const config = {
   // WebGL (Web Graphics Library) is the default Phaser renderer.
@@ -64,7 +75,8 @@ const config = {
     // Arcade physics plugin manages physics simulation.
     default: 'arcade',
     arcade: {
-      gravity: { y: 200 } // This will apply gravity to every single game object in the scene.
+      // debug: true,
+      // gravity: { y: 200 }, // This will apply gravity to every single game object in the scene.
     }
   },
   scene: {
@@ -73,6 +85,5 @@ const config = {
     update
   }
 };
-
 
 new Phaser.Game(config);
