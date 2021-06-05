@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 
 let bird = null;
+let totalDelta = 0;
 
 // Loading assets, such as images, music, animations
 function preload () {
@@ -26,13 +27,32 @@ function create () {
   );
 
   // Add a sprite (game object - it has more properties than an image)
-  bird = this.add.sprite(
+  bird = this.physics.add.sprite(
     config.width/10, 
     config.height/2, 
     'bird'
   ).setOrigin(0);
-  debugger
+
+  // Set the gravity for the bird.
+  // bird.body.gravity.y = 200; // Speed (pixels per second); [This will gradually increase the velocity.]
+  // bird.body.velocity.y = 200; // Velocity (distance over time); [Velocity will always be constant.]
+
 };
+
+// 60 frames per second
+// This function will execute 60 times per second.
+function update (
+  time, // total time that the scene has been running.
+  delta // How much milliseconds per frame
+) {
+
+  if (totalDelta >= 1000) {
+    console.log('debug_kkh:: velocity', bird.body.velocity.y);
+    totalDelta = 0;
+  }
+
+  totalDelta += delta;
+}
 
 const config = {
   // WebGL (Web Graphics Library) is the default Phaser renderer.
@@ -43,10 +63,14 @@ const config = {
   physics: {
     // Arcade physics plugin manages physics simulation.
     default: 'arcade',
+    arcade: {
+      gravity: { y: 200 } // This will apply gravity to every single game object in the scene.
+    }
   },
   scene: {
     preload: preload,
     create: create,
+    update
   }
 };
 
