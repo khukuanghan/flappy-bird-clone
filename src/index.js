@@ -1,9 +1,19 @@
 import Phaser from "phaser";
 
-let bird = null;
-let totalDelta = 0;
-const xVelocity = 200;
-const yVelocity = 250;
+let player = null; // Initialize player;
+
+const GAME_SETTINGS = {
+  CANVAS_WIDTH: 800,
+  CANVAS_HEIGHT: 600,
+  GRAVITY_Y: 400,
+  GRAVITY_X: 0,
+};
+const PLAYER_PROPERTIES = {
+  FLAP_VELOCITY: 250,
+  MOVEMENT_VELOCITY: 200,
+  STARTING_POSITION_X: GAME_SETTINGS.CANVAS_WIDTH/10,
+  STARTING_POSITION_Y: GAME_SETTINGS.CANVAS_HEIGHT/2,
+};
 
 // If the bird's x position is same or larger than the width of the canvas, send the bird back to the left
 // If the bird's x position is same or smaller than 0, send the bird back to the right.
@@ -11,35 +21,51 @@ const yVelocity = 250;
 function _horizontalBounce () {
   const {
     x: positionX,
-    width: birdWidth
-  } = bird;
-  if (positionX >=  config.width - birdWidth) {
-    bird.body.velocity.x = -Math.abs(xVelocity);
+    width
+  } = player;
+  if (positionX >=  config.width - width) {
+    player.body.velocity.x = -Math.abs(PLAYER_PROPERTIES.MOVEMENT_VELOCITY);
   } 
   else if (positionX <= 0) {
-    bird.body.velocity.x = xVelocity;
-  }
-}
+    player.body.velocity.x = PLAYER_PROPERTIES.MOVEMENT_VELOCITY;
+  };
+};
 
 // This will bounce the bird upwards.
-function flap () {
-  bird.body.velocity.y = -Math.abs(yVelocity); // -value because we're going up. (Positive values will go downwards)
-}
+function _birdFlap () {
+  player.body.velocity.y = -Math.abs(PLAYER_PROPERTIES.FLAP_VELOCITY); // -value because we're going up. (Positive values will go downwards)
+};
 
-// Loading assets, such as images, music, animations
+function _resetPlayerPosition () {
+  player.x = PLAYER_PROPERTIES.STARTING_POSITION_X;
+  player.y = PLAYER_PROPERTIES.STARTING_POSITION_Y;
+  player.body.velocity.y = 0;
+};
+
+// This will trigger when the bird has gotten out of bounds.
+function _checkForGameLoss () {
+  const { y: positionY } = player;
+  if (positionY > config.height || positionY < -Math.abs(player.height)) {
+    _resetPlayerPosition();
+  };
+};
+
+// Loading assets, such as images, music and animations.
 function preload () {
   // This context - scene
   // Contains function and properties we can use.
   this.load.image(
-    'sky', // Key of the resource. (Can call it anything you want.)
-    'assets/sky.png' // The path to the file.
+    'sky', // The key of the resource. (Can call it anything you want)
+    'assets/sky.png', // The path to the file.
   );
 
   // Load the bird
   this.load.image('bird', 'assets/bird.png');
 };
 
+// Creating game objects in the scene.
 function create () {
+  // The background image.
   this.add.image(
     0, // x axis of the scene
     0, // y axis of the scene
@@ -49,51 +75,53 @@ function create () {
     0, // y axis of the image file.
   );
 
-  // Add a sprite (game object - it has more properties than an image)
-  bird = this.physics.add.sprite(
-    config.width/10, 
-    config.height/2, 
-    'bird'
+  // The player object.
+  player = this.physics.add.sprite(
+    PLAYER_PROPERTIES.STARTING_POSITION_X,
+    PLAYER_PROPERTIES.STARTING_POSITION_Y,
+    'bird',
   ).setOrigin(0);
 
   // Set the gravity for the bird.
-  // bird.body.gravity.y = 200; // Speed (pixels per second); [This will gradually increase the velocity.]
-  // bird.body.velocity.x = xVelocity; // Velocity (distance over time); [Velocity will always be constant.]
-
-  // Input object
+  // player.body.gravity.y = GAME_SETTINGS.GRAVITY_Y; // Speed (pixels per second); [This will gradually increase the velocity.] - Independent from game's global gravity
+  // player.body.velocity.x = PLAYER_PROPERTIES.MOVEMENT_VELOCITY; // Velocity (distance over time); [Velocity will always be constant.]
+  
+  // This handles user inputs
   // This will execute when the user clicks.
-  this.input.on('pointerdown', flap);
+  this.input.on('pointerdown', _birdFlap);
   // This will execute when the user presses on the SPACE key.
-  this.input.keyboard.on('keydown-SPACE', flap)
+  this.input.keyboard.on('keydown-SPACE', _birdFlap)
 };
 
-// 60 frames per second
+// 60 frames per second.
 // This function will execute 60 times per second.
 function update (
-  time, // total time that the scene has been running.
-  delta // How much milliseconds per frame
+  time, // Total time that the scene has been running (in milliseconds).
+  delta, // How many milliseconds per frame.
 ) {
-
+  _checkForGameLoss();
 };
 
 const config = {
   // WebGL (Web Graphics Library) is the default Phaser renderer.
   // JS API for rendering 2D and 3D graphics - It is compatible with almost every modern web browser.
   type: Phaser.AUTO,
-  width:  800,
-  height: 600,
+  width: GAME_SETTINGS.CANVAS_WIDTH,
+  height: GAME_SETTINGS.CANVAS_HEIGHT,
   physics: {
     // Arcade physics plugin manages physics simulation.
     default: 'arcade',
     arcade: {
       debug: true,
-      gravity: { y: 400 }, // This will apply gravity to every single game object in the scene.
+      gravity: {
+        y: GAME_SETTINGS.GRAVITY_Y, // This will apply gravity to every single game object in the scene.
+      },
     }
   },
   scene: {
-    preload: preload,
-    create: create,
-    update
+    preload,
+    create,
+    update,
   }
 };
 
